@@ -1,0 +1,669 @@
+
+// RESULT FLAG NEEDED - 
+
+
+
+// WOT ABOUT APPENDING O EXISTING FILE?
+		//--------------------------------------------------------------------			
+		System.out.println("Console Output Has Been Re-Directed to .... C:\\RFT\\Console_Outputs");
+		//--------------------------------------------------------------------
+		// Console Output Redirection (SAVED TO C:\RFT\Console_Outputs)
+		Console_Redirection("Full_Road_Basics_Regression_Test_ANGULAR_Journeys_");
+		//--------------------------------------------------------------------
+		// START OF SCRIPT TIMING
+		//----------------------------------------------------------------------------------
+
+
+substring
+	Parsing Parameters from a Data Store 
+
+		Scraping parameter values from a datastore
+
+		// Data From dataStore   // MODIFY PARAMETER VALUES TO FIT DATAPOOL
+		
+		String sDayToSelect = Data_Store.DAY_TO_SELECT;
+		String sCalendarToSelect = Data_Store.CALENDAR_TO_SELECT;
+		String sCalendarName = Data_Store.CALENDAR_NAME;	
+
+		Writing parameter values to a datastore		
+
+		Data_Store.DAY_TO_SELECT = String sDayToSelect;
+		Data_Store.CALENDAR_TO_SELECT = String sCalendarToSelect;
+		Data_Store.CALENDAR_NAME = String sCalendarName;	
+
+		//----------------------------------------------------------------------------------
+
+	Casting Data Types
+
+		String to Integer
+		int iDayToSelect = Integer.parseInt(sDayToSelect);
+
+
+		String to double		
+		double dInitialLessonCost = Double.parseDouble(sInitialLessonCost);
+
+		//----------------------------------------------------------------------------------
+	setting text
+
+		Gui_Object().setProperty(".text", "Hello");
+
+	Getting text
+
+		sText = Gui_Object().getProperty(".text");
+
+		//----------------------------------------------------------------------------------
+
+	Calendar Instantiation, Where there are multiple (Identical) controls on the GUI with no discernable Identity method available
+
+
+		//----------------------------------------------------------------------------------
+		// Selection Of ListItem Using Find
+
+		RootTestObject root = getRootTestObject(); 
+		TestObject[] list = root.find(atDescendant(".class","Html.SELECT",".name","MyCombo")); 
+
+		SelectGuiSubitemTestObject  gto = (SelectGuiSubitemTestObject )list[0]; 
+
+		gto.select("April");
+
+		//----------------------------------------------------------------------------------
+		// Select Table Element
+		String name= “customer name”;
+
+		TestObject[]  Customer = table_customerDetails().find(“.class”,”Html.A”,”.text”,name);
+
+		customer[0].click();
+		//----------------------------------------------------------------------------------
+		// Single Line Find and Click
+		((GuiTestObject)form_optionsForm().find(atDescendant(".class","radio-input", ".id","single"))[0]).click();
+		// web element (angular)
+		// // another
+		// Eureka
+		((GuiTestObject)form_optionsForm().find(atDescendant("class","bd-option", "id","joint3Label"))[0]).click();
+		//----------------------------------------------------------------------------------
+
+
+		// For actual Calendar Control Selection Method
+		int iCalendarToSelect = Integer.parseInt(sCalendarToSelect);
+ 		// for Debug
+		
+		RootTestObject rto = getRootTestObject();
+		TestObject[] gto = rto.find(atDescendant(".alt","Choose Date",".class","Html.IMG"), false);
+			
+		// sCalendarToSelect 
+		System.out.println(gto.length);   // Returns 4 for New Learner
+		GuiTestObject Cal_Button = (GuiTestObject)gto[iCalendarToSelect];  // Replace gto[n]; with gto[iCalendarToSelect];
+		
+		try {
+			Cal_Button.click();		
+			logTestResult(sCalendarName+" Calendar Selected", true);
+		}
+		catch (Exception e){
+			logTestResult(sCalendarName+" Calendar FAILED to Select", false);
+		}
+		
+		// Clear the trash created by GuiTestObject Find Functionality above
+		unregisterAll();
+
+
+		//----------------------------------------------------------------------------------
+
+	Date Manipulation
+
+		// Get The Date In A Format That We Can Use Directly
+		// Create an instance of SimpleDateFormat used for formatting  
+		DateFormat df = new SimpleDateFormat("dd");  // dd = 01 through 31 ("EEE dd MMM yyyy");
+		// Get the date today using Calendar object. 
+		java.util.Date today = Calendar.getInstance().getTime();         
+		// Using DateFormat format method we can create a string representation of a 
+		String sTodaysDate = df.format(today);       // date with the defined format. 
+
+		//----------------------------------------------------------------------------------
+
+	Simplistic Month Selection On Popup Calendar
+
+		// If 27 or more, than go to next month and select the 1st Instead
+		if (iDayToSelect > 27){
+			// Click Next Month
+			Navigate_Next_Month(ANY, READY).click();
+			sleep(1);
+			iDayToSelect = 1;
+			logInfo("Day Requested is Greated than the 27th, Therefore Navigating to The Following Month and " +
+					"Selecting the ->"+iDayToSelect+"st->" );}
+
+		// If less than 1, than go to previous month and select the 27th Instead
+		if (iDayToSelect < 1){ // Todays date - (minus)- supplied value is before the 1st of the month
+			// Click Previous Month
+			Navigate_Previous_Month(ANY, READY).click();
+			sleep(1);
+			iDayToSelect = 27;
+			logInfo("Day Requested is Before the 1st of the Month, Therefore Navigating to The Previous Month and " +
+					"Selecting the ->"+iDayToSelect+"th->" );}
+		
+		//----------------------------------------------------------------------------------			
+
+	Select a Day on the present Calendar popup
+			
+		try {
+			// We Search The Calendar For The Specified Day, with text COLOR = black (active days displayed), 
+			// grey text = previous or next month as displayed at each extremity of the displayed month
+			((GuiTestObject)SelectADate().find(atDescendant(".text", iDayToSelect, "style",  "COLOR: black"))[0]).click();
+			logInfo(" Popup Calendar, Day Selection Number ->"+iDayToSelect+"-> Selected OK");            // style:  COLOR: black
+		//----------------------------------------------------------------------------------
+		}// Didn't find it that time
+		catch (Exception e){
+			// Didn't Find the day (can't happen, can it?
+			logInfo(" Popup Calendar, Day Selection for ->"+iDayToSelect+"-> Day DID NOT Select");}
+
+		//----------------------------------------------------------------------------------			
+
+	Search for an object on the current page (click it if existing, otherwise navigate to next page)
+
+
+		// FranchisedInstructor(ANY, READY).click();	
+		// Flag to detect success or not
+		boolean bFound = false;
+		while (!bFound){
+		try {
+		// 1st Page Search Results Returned, Search For Our Person
+			((GuiTestObject)Search_Results().find(atDescendant("Redirect", "Franchised", "InstructorID", 							Data_Store.INSTRUCTOR_ID))[0]).click();
+			logInfo(" Franchised Instructor "+Data_Store.INSTRUCTOR_ID+" Health Check Page Selected");
+			bFound = true;}
+			// Didn't find it that time
+		catch (Exception e){
+			// Second Page, Navigate Next
+			Next_SearchPage(ANY, READY).click();
+			// List Might Extend To A Second Page, So in that eventuality Provide 2nd (or more) Page Mechanism
+			//((GuiTestObject)Search_Results().find(atDescendant("Redirect", "Franchised", "InstructorID", 							Data_Store.INSTRUCTOR_ID))[0]).click();
+			logInfo(" Franchised Instructor "+Data_Store.INSTRUCTOR_ID+" NOT FOUND on the Current Search Page, Click NEXT to view 											Following Search Page");
+			bFound = false;}
+		}		 
+
+		//----------------------------------------------------------------------------------			
+
+	Boolean Operation
+
+		boolean binFound = sStatus.contains("New");
+	 	//----------------------------------------------------------------------------------
+		if (binFound=true){
+			boolean bFound = false;
+			while (!bFound){
+				try {
+					// Found Message(s), Read Each, Then Delete
+					Messages().waitForExistence();
+					Messages().isShowing();
+					Messages(ANY, READY).click();
+					Messages(ANY, READY).click(atText("Read"));
+					logTestResult(" New Pupil Message Displayed In The Instructor Messaging Area", true); 
+					//-----------------------------------------------------------------------------
+					// Delete After Read
+					Delete().waitForExistence();
+					Delete(ANY, READY).click();
+					logTestResult(" New Pupil Message Deleted From The Instructor Messaging Area", true);  
+					sleep(2);
+					bFound = false;
+				}
+				catch (Exception e){
+					// No More Messages
+					bFound = true;
+					// Jump Out Of While
+					//break;
+					}
+				break;
+				}
+			}
+		}
+		catch (Exception e){
+			// Default Expected, No Messages
+			logTestResult(" No Messages Reported After Deleting Previously Detected Instructor Messages",true);
+
+
+		//----------------------------------------------------------------------------------			
+
+	String Manipulation
+
+
+		//----------------------------------------------------------------------------------
+		// Grab Data Before Navigation
+		// From Diary Page
+		String sRescheduledDate = (String)Rescheduled_Lesson_Date().getProperty(".text");
+		String sRescheduledTime = (String)Rescheduled_Lesson_Time().getProperty(".defaultValue");
+		//----------------------------------------------------------------------------------
+		// Split sRescheduledDate String Into Component Parts		
+	 	String sRescheduled_Day_ddd = sRescheduledDate.split("\\ ")[0];  	// Mon
+		String sRescheduled_Day_dd = sRescheduledDate.split("\\ ")[1];   	// 11
+		String sRescheduled_Month_mmm = sRescheduledDate.split("\\ ")[2];	// Nov
+		String sRescheduled_Year_yyy = sRescheduledDate.split("\\ ")[3]; 	// 2012
+	 	String sReStringled_Hour_hh = sRescheduledTime.split("\\:")[0];  	// 12
+	 	String sReStringled_Minute_mm =  sRescheduledTime.split("\\:")[1];	// 34
+		sRescheduledTime = sRescheduledTime.split("\\ ")[0]; 
+		//----------------------------------------------------------------------------------		
+		// NAvigate Next to Additional Products from Diary Slot Selection
+		Next_Button().waitForExistence();
+		Next_Button(ANY, READY).click();
+		//----------------------------------------------------------------------------------
+	 	// Wait for Browser ReadyState After iE StartUp Click
+		callScript("Other_Function.Portal_Synchronisation");
+	 	//----------------------------------------------------------------------------------
+		// Synchronise
+		//ChooseAdditionalProducts(ANY, READY).waitForExistence(10.0, 0.5);
+		ChooseAdditionalProducts(ANY, READY).performTest(Choose_Additional_Products_PageVP(), 0.25, 2.0);	
+		//----------------------------------------------------------------------------------
+		// Grab Data Before Navigation
+		// From Additional Products page
+		String sSummaryBookingDate = (String)SummaryLessonDate().getProperty(".contentText");
+		//----------------------------------------------------------------------------------
+		// Split sSummaryBookingDate String Into Component Parts		
+		String sSummaryBookingDay_dd = sSummaryBookingDate.split("\\/")[0];   // 11
+		String sSummaryBookingMonth_mm = sSummaryBookingDate.split("\\/")[1]; // 08
+		String sSummaryBookingYear_yyyy = sSummaryBookingDate.split("\\/")[2];// 2012 08:30
+		sSummaryBookingYear_yyyy = sSummaryBookingYear_yyyy.split("\\ ")[0];  // 2012 minus time
+		String sSummaryBookingHourMinute_hh_mm = sSummaryBookingDate.split("\\ ")[1]; 		// 12:34
+	 	String sSummaryBookingHour_hh = sSummaryBookingHourMinute_hh_mm.split("\\:")[0];    	// 12
+	 	String sSummaryBookingMinute_mm = sSummaryBookingHourMinute_hh_mm.split("\\:")[1];  	// 34
+		//----------------------------------------------------------------------------------
+		// Verify times on both pages is the same or not
+		if (sRescheduledTime.equals(sSummaryBookingHourMinute_hh_mm)){
+			logTestResult("The Time Displayed For Lesson Start is "+sRescheduledTime+" On Both The" +
+					" Diary Page and New Products Page As Expected", true);
+		}
+		else {
+			logTestResult("The Time Displayed For Lesson Start is "+sRescheduledTime+" On The" +
+			" Diary Page, But on the New Products Page it is "+sSummaryBookingHourMinute_hh_mm, false);
+		}
+		//----------------------------------------------------------------------------------
+		// Verify Day on both pages is the same or not
+		if (sRescheduled_Day_dd.equals(sSummaryBookingDay_dd)){
+			logTestResult("The Day Displayed For Lesson Start is "+sRescheduled_Day_dd+" On Both The" +
+					" Diary Page and New Products Page As Expected", true);
+		}
+		else {
+			logTestResult("The Day Displayed For Lesson Start is "+sRescheduled_Day_dd+" On The" +
+			" Diary Page, But on the New Products Page it is "+sSummaryBookingDay_dd, false);
+		}
+		//----------------------------------------------------------------------------------
+		// Verify Month on both pages are the same or not
+		// Need To Convert Between 11 (mm) and Nov (mmm) before the check
+		Format formatter;
+		Date date = new Date();
+		//date.setMonth(0);
+		formatter = new SimpleDateFormat ("MM");
+		sRescheduled_Month_mmm = formatter.format(date); // change MMM to MM
+		//----------------------------------------------------------------------------------
+		// Verify Month on both pages is the same or not (post adjust, previous block)
+		// Do It
+		if (sRescheduled_Month_mmm.equals(sSummaryBookingMonth_mm)){
+			logTestResult("The Month Displayed For Lesson Start is "+sRescheduled_Month_mmm+" On Both The" +
+					" Diary Page and New Products Page As Expected", true);
+		}
+		else {
+			logTestResult("The Month Displayed For Lesson Start is "+sRescheduled_Month_mmm+" On The" +
+			" Diary Page, But on the New Products Page it is "+sSummaryBookingMonth_mm, false);
+		}
+		//----------------------------------------------------------------------------------
+		// Verify Year on both pages is the same or not
+		if (sRescheduled_Year_yyy.equals(sSummaryBookingYear_yyyy)){
+			logTestResult("The Year Displayed For Lesson Start is "+sRescheduled_Year_yyy+" On Both The" +
+					" Diary Page and New Products Page As Expected", true);
+		}
+		else {
+			logTestResult("The Year Displayed For Lesson Start is "+sRescheduled_Year_yyy+" On The" +
+			" Diary Page, But on the New Products Page it is "+sSummaryBookingYear_yyyy, false);
+		}
+		//----------------------------------------------------------------------------------
+		
+// MID$  SubString Extraction
+
+		//------------------------------------------------------------
+ 		// Additional Members                         
+		//------------------------------------------------------------
+ 		// DESTRUCTIVE TO UNDERLYING STRING
+		
+ 		// DESTRUCTIVE TO UNDERLYING STRING
+		// FIND FROM "Additional members ">
+		sFromThanks = sContainer_Text.split("Additional members ");
+		// Assign Above Sub String To String sCustomer               // Additional members MISS Pauline Plunkett MS PSLAMI PLINKINGSPURSPUR MR Ronnie Van Persil Cover
+ 		
+ 		String sAdditional_Members = sFromThanks[1];
+ 		// Grab SubString From Index 0 to Occurance Of "Cover" In String 		
+ 		
+ 		// FIND TO <"Cover"
+ 		i = (sAdditional_Members.indexOf("Cover"));
+ 		
+ 		// Truncate End Pre-Marker 1 ("Additional members ") and Start Post_Marker 2 ("Cover")
+ 		//------------------------------------------------------------
+ 		sAdditional_Members = sAdditional_Members.substring(0, i);
+ 		//------------------------------------------------------------
+
+ 		//String sAdditionalMembers = sFromThanks[1];
+		System.out.println("Additional Members = "+sAdditional_Members); 
+		//System.out.println("Additional Members Length = "+ i);
+
+		//------------------------------------------------------------
+
+
+	Varient TWo
+
+		//------------------------------------------------------------
+
+		String sStartName = "Policy underwritten by:"; //"Membership number";
+		String sEndName = "View policy terms"; //"Main member";
+		String sStartNameContent = ""; // 
+		int iIndex = 2; // There are 2
+
+		String sInsUnderwriter = (String)html_aside().getProperty(".contentText");
+
+		// EXTRACT SUBTRING
+	        // Text String To Search | Find item | To Marker | Find Item index | Returned Item |
+		subString(sInsUnderwriter, sStartName, sEndName, iIndex, sStartNameContent);
+
+		String sReportName = "Insurance_Underwriter";
+		String sExpected = Common_Variables.xmlInsurerName; // Z
+		// VERIFY SUBSTRING AGAINST EXPECTED VALUE
+ 		//------------------------------------------------------------
+		VerifyandReport(sReportName, Common_Variables.sActual, sExpected.trim(), sStartName);
+		//------------------------------------------------------------
+
+		//----------------------------------------------------------------------------------
+
+API Boolean Scrape and Manipulation
+
+		boolean bUseCustomerAddress = ((Boolean)uSe_Customer_Address_CheckBox().getProperty("CHECKED")).booleanValue();
+		//-------------------------------------------------------------------------	
+		if ((bUseCustomerAddress) = true){
+			logTestResult("Use Customer Address CheckBox IS Selected ", true);														//------------------------------------------------------------------
+			String sAddress1 = (String)Address_1().getProperty("value");
+			// Compare With DataPool and Actual Values				
+			if (sAddress1.equals(sAddress_1)){
+			//------------------------------------------------------------------
+				logTestResult("Use Customer Address_1 is as expected after CheckBox Selection ("+sAddress1+")", true);
+			//------------------------------------------------------------------
+			}
+			if (!sAddress1.equals(sAddress_1)){
+			//------------------------------------------------------------------
+				logTestResult("Use Customer Address 1 is NOT as expected after CheckBox Selection ("+sAddress1+") is Displayed," +
+						"But Expected ("+sAddress_1+")", false);
+			//------------------------------------------------------------------					
+				}
+			}
+		// Checkbox Selection Failure
+		if((bUseCustomerAddress) = false){
+					logTestResult("USe Customer Address CheckBox IS NOT Selected ", false);
+			
+		//----------------------------------------------------------------------------------
+	
+			// This overwrites original file and content (if any existed)
+		
+	// Write To File
+			String file_name = "C:/test.txt";
+			try {
+				// Write To File
+				BufferedWriter bfWrite = new BufferedWriter(new FileWriter(file_name));
+				bfWrite.write("wotsup");
+				bfWrite.newLine();
+				bfWrite.write("wotsup again");
+				bfWrite.newLine();										
+				bfWrite.close();
+			
+			} catch (IOException e){
+		            e.printStackTrace();
+	        
+			}
+		//-------------------------------------------------------------------------------
+	
+		// Read From File
+
+			StringBuilder File_Contents = new StringBuilder();
+			String Line_Content = null;int i = 0;
+			try {
+				BufferedReader bfRead =  new BufferedReader(new FileReader(file_name));					 							while (( Line_Content = bfRead.readLine()) != null){
+					i++;
+					
+					if (i == 0){
+						String sName = Line_Content;
+					}
+					if (i == 1){
+						String sReferenceNumber = Line_Content;
+					}
+	 
+						 
+					File_Contents.append(Line_Content);
+					logInfo(Line_Content);
+				        }
+
+					
+					
+				} catch (FileNotFoundException e) {
+					// File Not Found
+					e.printStackTrace();
+				} catch (IOException e) {
+					// File Read Error
+					e.printStackTrace();
+				}
+
+		//-------------------------------------------------------------------------------
+// MANUAL VERIFICATION POINTS
+
+		vpManual("Compared_Quote_Prices", sQuoteTotalprice_Text, sTotalprice_Text).performTest();
+
+		// More detailed varient
+		Object done;
+		text_lineOne().waitForExistence(5,  0.25);
+		String sAddressLineOne_Value = (String)text_lineOne().getProperty(".value");
+		if ((boolean) (done=vpManual("Address_Line_1", sAddressLineOne_Value, "28 BELVEDERE GARDENS").performTest())){
+			// passed
+		}
+		else{
+			stop();// Failed
+		}
+
+
+	
+ 		//-------------------------------------------------------------------------------
+		// CAMEL Case (QQ)
+		// Passed Title i ALL UPPERCASE - We Convert To Camel For Comparison Of Following Screen Scrape.
+		sPolicy_Holder=sPolicy_Holder.substring(0,1).toUpperCase()+sPolicy_Holder.substring(1, sPolicy_Holder.length());
+
+
+	
+ 		//-------------------------------------------------------------------------------
+
+                // Remove Whitespace and 
+	           String mysz2 = mysz.replaceAll("\\s","");
+
+               //-------------------------------------------------------------------------------
+               // Grab string length, 1st char to upper
+
+		String[] sAf = sQuoteDetails.split("Thank you for getting a quote through");
+		String sSAf = sAf[1]; String sAffinity = sSAf.substring(0, i+1); 
+		//-----------------
+		sAffinity=sAffinity.substring(0,1).toUpperCase()+sAffinity.substring(1, sAffinity.length());
+		
+
+                //-------------------------------------------------------------------------------
+ // GRAB XML ELEMENT VALUE AND RETURN IN TO STORE
+		VerifyandReport("Affinity_Quote_Provider", Common_Variables.affinity.trim(), sAffinity.trim(), " Affinity Quote Provider ");
+
+		String segments1[] = (sReturned_XML).split("affinity="); // All After ="
+		// Grabs Starting String From "affinity="
+		String sAf = segments1[1]; // First Occurrence Of "affinity="
+		// Get All To Next Space -  After Affinity There Is A Space
+		String delims = "[ ]";
+		// Split String By Spaces
+		String[] sAf1 = sAf.split(delims);
+		// Get String Up To 1st Space ("GOCOMPARE")
+		sAffinity = sAf1[0];
+		// Remove Leading and Trailing Quotes
+		// Get String Length to Remove Final Quote
+		int iLength = sAffinity.length();
+		sAffinity = sAffinity.substring(1,iLength-1);
+              //-------------------------------------------------------------------------------
+ 		// MATHS ON 2 STRINGS CONTAINING NUMERICS ONLY
+
+		var num1 = '20',
+    		num2 = '30.5';
+
+		var sum = (+num1) + (+num2);
+
+		// Just to test it
+		console.log( sum ); // 50.5
+
+
+              //-------------------------------------------------------------------------------
+ 		// STRING TO DOUBLE - Both Ways, Maths To Add Strings
+
+
+
+		//--------------------------------------------------------------------------------		
+		// VERIFY SUBTOTALS == TOTAL         S T A R T
+ 		//--------------------------------------------------------------------
+		svTitle = "Accross_Page_Cost_Totals"; sReport = "Accross Page Cost Totals";
+		// Remove £(s) and Spaces Before Summation
+		removeStringDebris(sActualCCCharge); sActualCCCharge = Common_Variables.sActual;
+		removeStringDebris(sActualPolicyPrice); sActualPolicyPrice = Common_Variables.sActual;
+ 		//--------------------------------------------------------------------
+		// Convert From String To Double Then Round To Sum The Subs
+		double dActualCCCharge = Double.parseDouble(sActualCCCharge);
+		double dActualPolicyPrice = Double.parseDouble(sActualPolicyPrice);
+ 		//--------------------------------------------------------------------
+		// Add The Subs
+		double dCalculatedTotalCost = dActualCCCharge + dActualPolicyPrice;
+ 		//--------------------------------------------------------------------
+		// Back From Double To String And Verify Match
+		String sCalculatedTotalCost = Double.toString(dCalculatedTotalCost);
+		//--------------------------------------------------------------------
+		VerifyandReport(svTitle, sActualTotalCost, "£"+sCalculatedTotalCost, sReport);
+		//--------------------------------------------------------------------------------		
+		// VERIFY SUBTOTALS == TOTAL           E N D
+ 		//--------------------------------------------------------------------
+
+		// ENABLE - DISABLE LOGGING
+
+ 		 	//--------------------------------------------------------------------
+			// Temporarily Suspend Log To Hide The Following Erroneous Tool Error!!!
+		 	//--------------------------------------------------------------------
+		 	setCurrentLogFilter(DISABLE_LOGGING);
+		 	 //--------------------------------------------------------------------
+
+		 	//--------------------------------------------------------------------
+			// RESUME Temporarily Suspended Log To Hide The Previous Erroneous Tool Error!!!
+		 	//--------------------------------------------------------------------
+			setCurrentLogFilter(ENABLE_LOGGING);
+			//----------------------------------------------------------------------------		
+
+
+		// SCREEN SNAPSHOT
+		//--------------------------------------------------------------------------------				
+		//---------------------------------------------------------------------------------------------------------------------
+		logInfo(" Quote Details Confirmed ",getRootTestObject().getScreenSnapshot());
+		//---------------------------------------------------------------------------------------------------------------------
+
+		//--------------------------------------------------------------------------------
+Lookup of Array Data - Identity and Value
+		//------------------------------------------------------------------------------------------
+		// String Data with Embedded Elements
+		//List<List<String>> lCheckContains = new ArrayList<List<String>>();
+		String [][] sPageElementLookUp = {
+			{"Purchaser Name",sTitle+" "+sForename+" "+sSurname},
+			{"Purchaser Email",sEmail},		
+			{"Purchaser Telephone",sPhoneNumber},
+			{"Purchaser Postcode",sPostcode},
+			{"Vehicle Registration",sVehicleReg},
+			{"Vehicle Make",sVehicleMake},
+			{"Vehicle Model",sVehicleModel},
+			{"Vehicle Registration",sVehicleReg},
+			{"Vendor Name",sVendorName},
+			{"Vendor Postcode",sVendorPostcode},
+		};
+		//------------------------------------------------------------------------------------------
+		// Capture Remaining Embedded Data and Compare
+		String sSummary_Details_Text = (String)html_container().getProperty(".text");
+		//------------------------------------------------------------------------------------------
+		// Element Name
+		for (int i = 0; i < sPageElementLookUp.length; i++) {
+		      System.out.print(sPageElementLookUp[i][0] + ": ");
+			  //-----------------------------------------------------------------------------------
+		      // Element Content
+		      for (int j = 1; j < sPageElementLookUp[i].length; j++) {
+		    	  //-------------------------------------------------------------------------------
+		    	  System.out.print(sPageElementLookUp[i][j]); //  + " "
+		    	  //-------------------------------------------------------------------------------
+			  		if (sSummary_Details_Text.contains(sPageElementLookUp[i][j])){
+						logTestResult("Summary Page Contains "+sPageElementLookUp[i][0] + ": " + sPageElementLookUp[i][j]+" As Expected", true);
+					}
+			  		else{
+						logTestResult("Summary Page DOES NOT Contain "+sPageElementLookUp[i][0] + ": " + sPageElementLookUp[i][j], false);
+			  		}
+		    	  //-------------------------------------------------------------------------------
+		      }
+		      System.out.println();			      
+		}	
+		//------------------------------------------------------------------------------------------  		
+				
+
+BROWSERS
+
+		The below code is used to launch URL in default browser:
+
+		startBrowser(“www.google.com”);
+
+		If your default browser is Mozilla Firefox, the the above code will launch the url in default browser
+
+ 
+
+		The below code is used to launch URL in Internet Explorer browser: 
+
+		startBrowser(“Internet Explorer”, “www.google.com”);
+
+ 
+
+		The below code is used to launch URL in Mozilla Firefox browser:
+
+		startBrowser(“Mozilla Firefox”, “www.google.com”);
+
+ 
+
+		The below code is used to launch URL in Google Chrome browser:
+
+		startBrowser(“Chrome”, “www.google.com”);
+
+---------------------------------
+Browser URL text
+		pageAddress = (String) iE(ANY, LOADED).getProperty(
+				".documentName");
+
+		boolean quotePage = pageAddress.contains("quote-view");
+
+---------------------------------
+Get Computer Name
+		String sHostName = "";
+		try {
+			sHostName = InetAddress.getLocalHost().getHostName();
+		} catch (UnknownHostException e1) {
+
+---------------------------------
+		//-------------------------------------------------------------------------
+		// GET HOST NAME          - START  ----------------------------------------
+		public static String Host_Name()
+		{
+			String sHostName = "";
+			try {
+				sHostName = InetAddress.getLocalHost().getHostName();
+			} catch (UnknownHostException e1){
+				
+			}
+			return sHostName;			
+			
+		}
+		// GET HOST NAME          - END  ------------------------------------------
+		//-------------------------------------------------------------------------
+		
+		System.out.println("Host Name = "+Host_Name());
+
+
+
+// SCREENSHOTS, OR ELEMENTS THEROF
+		
+			Text Description for Log         Object(or child to capture) - resultant log output
+		logInfo(" Quote Details FINAL Screen ",getRootTestObject().getScreenSnapshot());
+		

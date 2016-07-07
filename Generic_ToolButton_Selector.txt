@@ -1,0 +1,112 @@
+package Test_Steps.Navigation;
+import resources.Test_Steps.Navigation.Generic_ToolButton_SelectorHelper;
+import com.rational.test.ft.*;
+import com.rational.test.ft.object.interfaces.*;
+import com.rational.test.ft.object.interfaces.SAP.*;
+import com.rational.test.ft.object.interfaces.WPF.*;
+import com.rational.test.ft.object.interfaces.dojo.*;
+import com.rational.test.ft.object.interfaces.siebel.*;
+import com.rational.test.ft.object.interfaces.flex.*;
+import com.rational.test.ft.object.interfaces.generichtmlsubdomain.*;
+import com.rational.test.ft.script.*;
+import com.rational.test.ft.value.*;
+import com.rational.test.ft.vp.*;
+import com.ibm.rational.test.ft.object.interfaces.sapwebportal.*;
+/**
+ * Description   : Functional Test Script
+ * @author horned
+ */
+
+// - - A U T O M A T I O N -> U S E C A S E -> H I S T O R Y - Please Keep Updated VVVVVVVV
+//------------------------------------------------------------------------------------------
+//    D a t e   |   Test Activity, Creation, Execution, Maintenance, Defect   |  Initials  |
+//------------------------------------------------------------------------------------------
+//  03/01/2013  | Initial Creation of Test Automation UseCase for ->Generic_Actions_Selector->  | horned |
+//------------------------------------------------------------------------------------------
+//              |                                                             |            |
+//------------------------------------------------------------------------------------------
+//              |                                                             |            |
+//------------------------------------------------------------------------------------------
+//              |                                                             |            |
+//------------------------------------------------------------------------------------------
+
+// - - A U T O M A T I O N -> U S E C A S E -> H I S T O R Y - Please Keep Updated ^^^^^^^^
+
+
+public class Generic_ToolButton_Selector extends Generic_ToolButton_SelectorHelper
+{
+	/**
+	 * Script Name   : <b>Generic_Actions_Selector</b>
+	 * Generated     : <b>3 Jan 2013 14:34:57</b>
+	 * Description   : Functional Test Script
+	 * Original Host : WinNT Version 5.1  Build 2600 (S)
+	 * 
+	 * @since  2013/01/03
+	 * @author horned
+	 */
+	public void testMain(Object[] args) 
+	
+	//-------------------------------------  S T A R T  ----------------------------------------
+	//                      
+	//				Script Name   : <b>Generic_Actions_Selector</b>
+	//
+	//-------------------------------------  S T A R T  ----------------------------------------
+
+	{		
+		// Can Use This TO Actually Select Textual Content Or Use Navigate.Next To Select The NEXT Option
+		
+		//		// Data From Calling Script DataPool
+ 		String sText = (String)args[0];  
+ 		System.out.println("Target Button/Control = "+sText);
+ 		//
+		// Debug
+ 		//String sText = "New Product"; // nodeValue:  Discounts  // Customer Types
+		// Debug
+		//----------------------------------------------------------------------------------
+		// Wait for Browser ReadyState After iE StartUp Click
+		callScript("Test_Steps.Other_Function.Portal_Synchronisation");
+        //---------------------------------------------------------------------------------------------------------
+        // Find THe Button To Click By Matching .text and .contentText property values
+		RootTestObject rto = getRootTestObject();
+		TestObject[] gto = rto.find(atDescendant(".text",sText,".contentText",sText), false); // .contentText
+        //---------------------------------------------------------------------------------------------------------
+		// sCheckBoxToSelect 
+		System.out.println(gto.length);   // 
+        //---------------------------------------------------------------------------------------------------------
+		// Locate Checkbox
+		GuiTestObject Action_Selector = (GuiTestObject)gto[0];   
+        //---------------------------------------------------------------------------------------------------------
+		sleep(3);
+		Action_Selector.click();
+	    //---------------------------------------------------------------------------------------------------------
+		// Clean Up  
+		unregisterAll();
+        //---------------------------------------------------------------------------------------------------------
+		// Wait For Property Return (If existing, true for dialogs, otherwise false)
+		try {
+			while (!Caption().isShowing()){
+				sleep(2.0);}
+		    //---------------------------------------------------------------------------------------------------------
+			// Verify
+			String sCaptionText = (String)Caption().getProperty(".text");
+		    //---------------------------------------------------------------------------------------------------------
+			if (sCaptionText.equals(sText)){
+				logTestResult("Right Hand Tool Button Cluster - "+sText+" - Selected OK and "+sText+" Dialog Appeared", true);
+			    //---------------------------------------------------------------------------------------------------------
+			}
+			else{
+				logTestResult("Right Hand Tool Button Cluster - "+sText+" - FAILED to Select, OR "+sText+" Dialog Did NOT Appear ", false);
+			    //---------------------------------------------------------------------------------------------------------
+			}		
+		}
+		catch (Exception e){
+			logTestResult("Right Hand Tool Button Cluster - "+sText+" - Selected OK ", true);
+		}
+	}
+	//--------------------------------------  E  N  D  -----------------------------------------
+	//                      
+	//				Script Name   : <b>Generic_Actions_Selector</b>
+	//
+	//--------------------------------------  E  N  D  -----------------------------------------
+}
+

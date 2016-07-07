@@ -1,0 +1,18 @@
+1) AGGREGATORS suite in selenium (4 aggs for * HOME * and MOTOR ) - msm , CTM , GO compare , confused .ALL PASSED PL1 (8 Journeys - 30 Mins)
+2) EBC in RFT - ALL PASSED PL1 (25, Full, End to End Journeys WIn7/IE11 - 45 Mins)
+3) ROAD desktop in RFT - ALL PASSED PL1 (20, Full, End to End Journeys (XP/IE8 - 50 Mins)
+4) MOTOR - ALL PASSED PL1 (18, Full, End to End Journeys (XP/IE8 - 80 Mins)
+5) HOME in RFT - ALL PASSED PL1 (25, Full, End to End Journeys (XP/IE8 - 60 Mins)
+6) HOME MEMBERSHIP - ALL PASSED PL1 (20, Full, End to End Journeys (Win7/IE11 - 45 Mins
+
+Commenced 11:30 - Completed16:30 - 30/06/2015
+
+
+1) AGGREGATORS suite in selenium (4 aggs for * HOME * and MOTOR ) - msm , CTM , GO compare , confused .ALL PASSED LIVE (8 Journeys - 30 Mins)
+2) EBC in RFT - ALL PASSED LIVE (25, Full, End to End Journeys WIn7/IE11 - 45 Mins)
+3) ROAD desktop in RFT - ALL PASSED LIVE (20, Full, End to End Journeys (Win7/IE11 - 50 Mins)
+4) MOTOR - ALL PASSED LIVE (18, Full, End to End Journeys (XP/IE8 - 80 Mins)
+5) HOME in RFT - ALL PASSED LIVE (25, Full, End to End Journeys (XP/IE8 - 60 Mins)
+6) HOME MEMBERSHIP - ALL PASSED LIVE (20, Full, End to End Journeys (Win7/IE11 - 45 Mins
+
+Commenced 08:15 - Completed 11:00 - 01/07/2015

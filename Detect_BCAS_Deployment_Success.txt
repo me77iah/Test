@@ -1,0 +1,228 @@
+package Test_Steps.Other_Function;
+import java.sql.CallableStatement;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
+import resources.Test_Steps.Other_Function.Detect_BCAS_Deployment_SuccessHelper;
+import Test_Steps.Other_Function.DATA_STORE;
+import com.rational.test.ft.*;
+import com.rational.test.ft.object.interfaces.*;
+import com.rational.test.ft.object.interfaces.SAP.*;
+import com.rational.test.ft.object.interfaces.WPF.*;
+import com.rational.test.ft.object.interfaces.dojo.*;
+import com.rational.test.ft.object.interfaces.siebel.*;
+import com.rational.test.ft.object.interfaces.flex.*;
+import com.rational.test.ft.object.interfaces.generichtmlsubdomain.*;
+import com.rational.test.ft.script.*;
+import com.rational.test.ft.value.*;
+import com.rational.test.ft.vp.*;
+import com.ibm.rational.test.ft.object.interfaces.sapwebportal.*;
+import com.ibm.rmi.iiop.Connection;
+/**
+ * Description   : Functional Test Script
+ * @author horned
+ */
+
+// - - A U T O M A T I O N -> U S E C A S E -> H I S T O R Y - Please Keep Updated VVVVVVVV
+//------------------------------------------------------------------------------------------
+//    D a t e   |   Test Activity, Creation, Execution, Maintenance, Defect   |  Initials  |
+//------------------------------------------------------------------------------------------
+//  20/02/2013  | Initial Creation of Test Automation UseCase for ->Detect_BCAS_Deployment_Success->  | horned |
+//------------------------------------------------------------------------------------------
+//              |                                                             |            |
+//------------------------------------------------------------------------------------------
+//              |                                                             |            |
+//------------------------------------------------------------------------------------------
+//              |                                                             |            |
+//------------------------------------------------------------------------------------------
+
+// - - A U T O M A T I O N -> U S E C A S E -> H I S T O R Y - Please Keep Updated ^^^^^^^^
+
+
+public class Detect_BCAS_Deployment_Success extends Detect_BCAS_Deployment_SuccessHelper
+{
+	/**
+	 * Script Name   : <b>Detect_BCAS_Deployment_Success</b>
+	 * Generated     : <b>20 Feb 2013 11:37:44</b>
+	 * Description   : Functional Test Script
+	 * Original Host : WinNT Version 5.1  Build 2600 (S)
+	 * 
+	 * @since  2013/02/20
+	 * @author horned
+	 */
+	public void testMain(Object[] args) 
+	
+	//-------------------------------------  S T A R T  ----------------------------------------
+	//                      
+	//				Script Name   : <b>Detect_BCAS_Deployment_Success</b>
+	//
+	//-------------------------------------  S T A R T  ----------------------------------------
+
+	{
+
+		//----------------------------------------------------------------------------------
+		// Check If Browser(s)Already Open Before Start. Close All Browsers Before Continuing
+		RootTestObject root = getRootTestObject();
+		TestObject[] to = root.find(atDescendant(".class", "Html.HtmlBrowser"));
+		int len = to.length;
+		for (int i = 0; i < len; i++) {
+			BrowserTestObject Topobj = new BrowserTestObject(to[i]);
+			try {
+				Topobj.getProcess().kill();
+				sleep(1);
+				len = to.length;
+			} catch (TargetGoneException e) {
+				logWarning("Exception occurred during close browser, Attempting To Continue Test After Delay");
+				sleep(2);
+		}}	
+		//----------------------------------------------------------------------------------
+		String sBrowser = "iE";             // CURRENTLY OVERIDING DP VALUES (ABOVE) FOR STARTUP
+		String sAutoDeploymentWebPage = "AutoDeployWeb"; //AUto Deployment System Web Page";
+		//----------------------------------------------------------------------------------
+		//          Start Portal and             -        Test Step nn
+		//----------------------------------------------------------------------------------
+		// Start Up     - To Parameterise When All Intact
+		startApp(sAutoDeploymentWebPage);
+	
+		//----------------------------------------------------------------------------------
+		// Wait for Browser ReadyState After iE StartUp Click
+		callScript("Test_Steps.Other_Function.Portal_Synchronisation");
+		//----------------------------------------------------------------------------------
+
+		//String sCompleted_Deployments = (String)html_body().getProperty(".text");
+		
+//		Deployments().waitForExistence(); // Verify That The Window Appears
+//		String IdBuildNumberRevisionProjectBu_Text = (String)table_idBuildNumberRevisionPro().getProperty(".text");
+//		table_idBuildNumberRevisionPro().performTest(IdBuildNumberRevisionProjectBu_visiblecontentsVP(), 0.25, 10.0);
+		
+		String sLatestBuildSuccess = (String)table_idBuildNumberRevisionPro().getProperty(".text");
+		
+		// Remembering that the NEWEST build is at the top of the Build Table
+		// Column 6 Indicate Ok for Success, OR failed for Unsuccessful Attempt at Deployment
+		
+		String sStatus = sLatestBuildSuccess.split("\\ ")[21]; //21 33 was a failure 23 was a pass during denug
+		
+		if (sStatus.equals("failed")){
+			logTestResult("The Latest Deployment Of The BCAS System FAILED >"+sStatus+">, Please Interrogate Logs For Reason. TESTING CANNOT CONTINUE!!!!", false);
+			stop();
+		}
+		else {
+			logTestResult("The Latest Deployment Of The BCAS System Was a SUCCESS >"+sStatus+">, Smoke Testing CONTINUING!", true);
+		}
+		
+		//----------------------------------------------------------------------------------
+		// Deployment Success (Writes to log)
+	
+		vpManual("BCAS_Overnight_Deployment_Success", "Ok", sStatus).performTest(0.25, 2.0);		
+		//----------------------------------------------------------------------------------			
+
+/*				//http://www.javadb.com/connect-to-database-and-call-stored-procedure
+	//you will probably need:
+			        java.sql.Connection con = null;
+
+			        CallableStatement proc_stmt = null;
+
+			        try {
+			            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+
+			            //con = DriverManager.getConnection("jdbc:sqlserver://DKT921142/SQLEXPRESS;databaseName=BcasDeployments", "horned", "password");
+			            
+			            //con = DriverManager.getConnection("jdbc:sqlserver://DKT921142/SQLEXPRESS;databaseName=BcasDeployments;integratedSecurity=true; ");
+
+			            con = DriverManager.getConnection("jdbc:sqlserver://DKT921142;instanceName=SQLEXPRESS;databaseName=BcasDeployments;integratedSecurity=true;");
+			            
+			            proc_stmt = con.prepareCall("{ call usp_UpdateLastDeploymentWithTestResults(?, ?) }");
+
+			            proc_stmt.setString(1, "1");
+
+			            proc_stmt.setString(2, "/rational_ft_log.html");
+
+			            proc_stmt.executeQuery();
+
+			        } catch (ClassNotFoundException ex) {
+
+			            ex.printStackTrace();
+
+			        } catch (SQLException ex) {
+
+			            ex.printStackTrace();
+
+			        } finally {
+
+				            try {
+
+			                proc_stmt.close();
+
+			                con.close();
+
+			            } catch (SQLException ex) {
+
+			                ex.printStackTrace();
+			            }		         
+			        }
+*/
+
+//
+//		// Check For Existing (Available From Utilities)
+////		while (iE().exists()){
+////			iE().close();
+////			sleep(2);
+//		
+//		
+//		
+//		
+//		// Verify Browser Opened OK, And The Default page Is Search Customer
+//		// Synchronisation And Correct Starting Page
+////		pageTab_customerSearch().waitForExistence(50.0, 0.25);
+////		
+////		//----------------------------------------------------------------------------------
+//		
+//		// HTML Browser
+//		// Document: Home Page - My ASP.NET MVC Application: http://dkt921211/
+//		Deployments().click(atCell(
+//                                        atRow(atIndex(1)), 
+//                                        atColumn("Deployed ok")));
+//		
+//		try {
+//			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+//		} catch (ClassNotFoundException e) {
+//			// 
+//			e.printStackTrace();
+//		}
+//		
+//		String url = "jdbc:sqlserver://server:1433;<DatabaseName>";
+
+		
+		
+		
+		
+		
+//		String sDeployedStatus = Deployments().getProperty(propertyName)
+		
+//		// Verify page Name Returned As Expected
+//		PageTitle().performTest(BCAS_StartUpVP(),0.25, 20.0);
+//				
+//		if (iE().exists()){
+//			logTestResult(sBrowser+ "Browser Opened Successfully, And BCAS System Is Displayed ", true);
+//		}
+//			
+//		else if (!iE().exists()){
+//			logTestResult(sBrowser+ "Browser DID NOT OPEN! ", false);
+//		
+//		//----------------------------------------------------------------------------------
+//		// Refresh Cash
+//		//iE(pageTab_customerSearch(ANY, READY),DEFAULT_FLAGS).inputKeys("^{F5}");
+//		//logTestResult(sBrowser+ "Browser Cash Refreshed ", true);
+//		//----------------------------------------------------------------------------------
+//		// Wait for Browser ReadyState After iE StartUp Click
+//		callScript("Test_Steps.Other_Function.Portal_Synchronisation");
+		//----------------------------------------------------------------------------------
+	}
+
+	//--------------------------------------  E  N  D  -----------------------------------------
+	//                      
+	//				Script Name   : <b>Detect_BCAS_Deployment_Success</b>
+	//
+	//--------------------------------------  E  N  D  -----------------------------------------
+}
+

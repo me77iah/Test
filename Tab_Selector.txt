@@ -1,0 +1,95 @@
+package Test_Steps.Navigation;
+import resources.Test_Steps.Navigation.Tab_SelectorHelper;
+import com.rational.test.ft.*;
+import com.rational.test.ft.object.interfaces.*;
+import com.rational.test.ft.object.interfaces.SAP.*;
+import com.rational.test.ft.object.interfaces.WPF.*;
+import com.rational.test.ft.object.interfaces.dojo.*;
+import com.rational.test.ft.object.interfaces.siebel.*;
+import com.rational.test.ft.object.interfaces.flex.*;
+import com.rational.test.ft.object.interfaces.generichtmlsubdomain.*;
+import com.rational.test.ft.script.*;
+import com.rational.test.ft.value.*;
+import com.rational.test.ft.vp.*;
+import com.ibm.rational.test.ft.object.interfaces.sapwebportal.*;
+/**
+ * Description   : Functional Test Script
+ * @author horned
+ */
+
+// - - A U T O M A T I O N -> U S E C A S E -> H I S T O R Y - Please Keep Updated VVVVVVVV
+//------------------------------------------------------------------------------------------
+//    D a t e   |   Test Activity, Creation, Execution, Maintenance, Defect   |  Initials  |
+//------------------------------------------------------------------------------------------
+//  31/12/2012  | Initial Creation of Test Automation UseCase for ->Tab_Selector->  | horned |
+//------------------------------------------------------------------------------------------
+//              |                                                             |            |
+//------------------------------------------------------------------------------------------
+//              |                                                             |            |
+//------------------------------------------------------------------------------------------
+//              |                                                             |            |
+//------------------------------------------------------------------------------------------
+
+// - - A U T O M A T I O N -> U S E C A S E -> H I S T O R Y - Please Keep Updated ^^^^^^^^
+
+
+public class Tab_Selector extends Tab_SelectorHelper
+{
+	/**
+	 * Script Name   : <b>Tab_Selector</b>
+	 * Generated     : <b>31 Dec 2012 13:44:10</b>
+	 * Description   : Functional Test Script
+	 * Original Host : WinNT Version 5.1  Build 2600 (S)
+	 * 
+	 * @since  2012/12/31
+	 * @author horned
+	 */
+	public void testMain(Object[] args) 
+	
+	//-------------------------------------  S T A R T  ----------------------------------------
+	//                      
+	//				Script Name   : <b>Tab_Selector</b>
+	//
+	//-------------------------------------  S T A R T  ----------------------------------------
+
+	{
+		String sTabName = (String)args[0];  		    		//  
+		//Debug
+		//String sTabName= "New Product";
+		//Debug
+		//----------------------------------------------------------------------------------
+		// Wait for Browser Going Into Tab Selection
+		callScript("Test_Steps.Other_Function.Portal_Synchronisation");
+		//----------------------------------------------------------------------------------
+        // Now We Have The Row Index And The Product Code We Can Select It
+		RootTestObject rto = getRootTestObject();
+		TestObject[] gto = rto.find(atDescendant(".text",sTabName,"nodeValue",sTabName), false);
+        //---------------------------------------------------------------------------------------------------------
+		// sTabToSelect 
+		System.out.println(gto.length);   // Should only be 1, and will always equal 1 for this configuration
+        //---------------------------------------------------------------------------------------------------------
+		// Locate Checkbox
+	 	GuiTestObject TabSelector = (GuiTestObject)gto[0];   
+        //---------------------------------------------------------------------------------------------------------
+	 	sleep(3.0);
+	 	try {
+		 	TabSelector.click();		
+		 	logTestResult("Page Tab/Button "+sTabName+" Selected", true);
+	 	}
+	 	catch (Exception e){
+		 	logTestResult("Page Tab/Button "+sTabName+" FAILED To Select", false);
+	 	}
+		//----------------------------------------------------------------------------------
+		// Wait for Browser Coming Out Of Tab Selection
+		callScript("Test_Steps.Other_Function.Portal_Synchronisation");
+		//----------------------------------------------------------------------------------
+		unregisterAll();
+	}
+
+	//--------------------------------------  E  N  D  -----------------------------------------
+	//                      
+	//				Script Name   : <b>Tab_Selector</b>
+	//
+	//--------------------------------------  E  N  D  -----------------------------------------
+}
+

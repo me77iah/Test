@@ -1,0 +1,12 @@
+Re: RFT- how to make an a popup window active and click open buttonJul 20, 2012 in response to saibenaka@1 
+
+
+IWindow[] aWindows = getTopWindows();
+IWindow xFilePopup;
+for (int i=0; i < aWindows.length; i++) {
+if (aWindows[i].getText().startsWith("https://google.com/")) {
+xFilePopup = aWindows[i];
+
+xFilePopup.restore();
+}}
+

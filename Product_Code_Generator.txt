@@ -1,0 +1,91 @@
+package Test_Steps.Other_Function;
+import java.security.SecureRandom;
+import java.util.Random;
+
+import resources.Test_Steps.Other_Function.Product_Code_GeneratorHelper;
+import com.rational.test.ft.*;
+import com.rational.test.ft.object.interfaces.*;
+import com.rational.test.ft.object.interfaces.SAP.*;
+import com.rational.test.ft.object.interfaces.WPF.*;
+import com.rational.test.ft.object.interfaces.dojo.*;
+import com.rational.test.ft.object.interfaces.siebel.*;
+import com.rational.test.ft.object.interfaces.flex.*;
+import com.rational.test.ft.object.interfaces.generichtmlsubdomain.*;
+import com.rational.test.ft.script.*;
+import com.rational.test.ft.value.*;
+import com.rational.test.ft.vp.*;
+import com.ibm.rational.test.ft.object.interfaces.sapwebportal.*;
+/**
+ * Description   : Functional Test Script
+ * @author horned
+ */
+
+// - - A U T O M A T I O N -> U S E C A S E -> H I S T O R Y - Please Keep Updated VVVVVVVV
+//------------------------------------------------------------------------------------------
+//    D a t e   |   Test Activity, Creation, Execution, Maintenance, Defect   |  Initials  |
+//------------------------------------------------------------------------------------------
+//  21/12/2012  | Initial Creation of Test Automation UseCase for ->Product_Code_Generator->  | horned |
+//------------------------------------------------------------------------------------------
+//              |                                                             |            |
+//------------------------------------------------------------------------------------------
+//              |                                                             |            |
+//------------------------------------------------------------------------------------------
+//              |                                                             |            |
+//------------------------------------------------------------------------------------------
+
+// - - A U T O M A T I O N -> U S E C A S E -> H I S T O R Y - Please Keep Updated ^^^^^^^^
+
+
+public class Product_Code_Generator extends Product_Code_GeneratorHelper
+{
+	/**
+	 * Script Name   : <b>Product_Code_Generator</b>
+	 * Generated     : <b>21 Dec 2012 14:43:40</b>
+	 * Description   : Functional Test Script
+	 * Original Host : WinNT Version 5.1  Build 2600 (S)
+	 * 
+	 * @since  2012/12/21
+	 * @author horned
+	 */
+	public void testMain(Object[] args) 
+	
+	//-------------------------------------  S T A R T  ----------------------------------------
+	//                      
+	//				Script Name   : <b>Product_Code_Generator</b>
+	//
+	//-------------------------------------  S T A R T  ----------------------------------------
+	
+	{
+			// Randomiser For Product Code, Duplicate codes a thing of the past ;-0			
+			//----------------------------------------------------------------------------------
+			int CODE_LENGTH = 10;   // MAXIMUM 10 Characters For Product Code
+			final Random RANDOM = new SecureRandom();
+			//---------------------------------------------------------------------------------- 
+			Product_Code().waitForExistence(10.0, 0.25);
+			Product_Code(ANY, READY).click(atPoint(29,3));
+			//----------------------------------------------------------------------------------	
+			String letters = "abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ";
+			//----------------------------------------------------------------------------------
+		      String sProductCode = "";
+		      for (int i=0; i<CODE_LENGTH; i++)
+		      {
+		          int index = (int)(RANDOM.nextDouble()*letters.length());
+		          sProductCode += letters.substring(index, index+1);
+		      }			
+				//----------------------------------------------------------------------------------
+				logInfo("Random Product Code Generated To Populate the Product Code Field with = "+sProductCode);
+				//----------------------------------------------------------------------------------	      
+		      iE(Product_Code(ANY, READY),DEFAULT_FLAGS).inputChars(sProductCode);
+		      //return FirstName;
+		      //----------------------------------------------------------------------------------
+		      // Populate Datastore With Value For Later Product Modification and Deletion
+		      Test_Steps.Other_Function.DATA_STORE.PRODUCT_CODE = sProductCode;
+		      logInfo("Product Code = "+sProductCode+" TO Uppercase Carried Out Later, When Code Selection Is Required");
+		}
+	//--------------------------------------  E  N  D  -----------------------------------------
+	//                      
+	//				Script Name   : <b>Product_Code_Generator</b>
+	//
+	//--------------------------------------  E  N  D  -----------------------------------------
+}
+

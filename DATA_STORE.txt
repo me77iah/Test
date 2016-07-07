@@ -1,0 +1,52 @@
+package Test_Steps.Other_Function;
+
+public class DATA_STORE {
+
+	// Down Side to Call Script For Test Steps, Data Doesn't
+	// Travel Seam Less Lie Between RationalTest Classes
+	
+	public static String CUSTOMER_ID;     	// Customer ID
+	public static String INSTRUCTOR_NAME;   // Was Selected From Datapool, But Function Is Dynamic and Rotational
+	public static String INSTRUCTOR_ID;     // Data_Store.INSTRUCTOR_ID = sInstructorID;
+	public static String FULL_NAME;     	// Fred Bloggs (no title, first the surname)
+	public static String INTRO_CHARGE;		// Under Instructor Franchise Account View, Learner Pupil Intro
+	public static String INJECTED_VALIDATION_FAULT; // Data_Store.INJECTED_VALIDATION_FAULT // true or false
+	public static String DAY_TO_SELECT;     	// Date Picker Parameter - Day toselect (from today + +27 thru -27) all other values ignored (but processed default
+	public static String CALENDAR_TO_SELECT;    // Date Picker Parameter - Calendar to Select (Calendar conntrol dynamically indexed, 0 thro n(totl number of cals))
+	public static String CALENDAR_NAME;     	// Calendar Name, for reporting purposes
+
+	// Add New Product and Delete Product - START
+	public static String PRODUCT_CODE;     		// Product Code  
+	public static String PRODUCT_CODE_INDEX;    // Product Code Checkbox Index +1 
+	public static String GENERIC_CODE;     		// Product Code  
+	
+	
+	// New Customer/Customer Verification Details - START
+	public static String COMPANY_NAME;     		// Company Name 
+	public static String COMPANY_TYPE;     		// Company Type 
+	public static String COMPANY_BRAND;     	// Company Brand 
+	public static String MEMBERSHIP_NUMBER;     // Membership Number
+	public static String ADDRESS_FAO;     		// Address For Attention Of
+	public static String PRIMARY_CONTACT;     	// Primary COntact 
+	// New Customer/Customer Verification Details - END
+	
+	public static String INJECTED_DEFECT;       // Data_Store.INJECTED_DEFECT // Invalid or NULL
+	public static String INJECTED_DEFECT_FIELD; // Data_Store.INJECTED_DEFECT_FIELD // Field Name
+	
+	// Proposals and Contracts
+	public static String PRICE_EXCLUDING_TAX;   // Proposals
+	public static String PRICE_INCLUDING_TAX;   // Proposals
+	
+	public static String POLICY_REFERENCE;      // To Aid Navigation Through To Add Item (car)
+	
+	public static String ELEMENT_CODE;	
+	public static String RULE_TEXT;	
+	public static String VARIABLE_LABEL;
+	public static String TOPIC_DESCRIPTION;
+	
+	// To Read
+	// String sPolicyRef = Test_Steps.Other_Function.DATA_STORE.POLICY_REFERENCE;
+
+	// To Write
+	// Test_Steps.Other_Function.DATA_STORE.DAY_TO_SELECT = String sPolicyRef;
+}

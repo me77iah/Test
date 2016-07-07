@@ -1,0 +1,75 @@
+1) email 20.12.2012
+
+What you need to do. 
+
+1) Create a folder within your project (Imports - basically something meaningful to you) 
+2) Import the Jar file 
+3) Right click Project Properties in RFT - Add Jar to Build Path (Not External) 
+-------- If you have a SuperHelper already ignore this step------------ 
+4) Create a Super Helper File (Goto New > SuperHelper - Again Put it somewhere you feel best)  and Now it localSuperHelper. 
+5) Open LocalSuperHelper and Make it look like below. 
+
+public abstract class LocalSuperHelper extends frameworkSuperHelper 
+
+
+6) Create a new script and make sure it points to your local SuperHelper 
+
+Within Script Type:   page("").TextField("").SetText(""); 
+
+
+This is the basic framework... More to come :) 
+
+We now have property  files, Excel reporting, Database Jar files, etc etc :) 
+
+2) email 20.12.2012
+
+i need to add java docs, this will help when hovering over the TextFIeld etc and give instructions on what needs to be inserted within...This will be jar version 2 :) 
+
+All Objects either require ID or Name (For Buttons use "value:=and The name") 
+
+If you open Google.com - This is an example :) 
+
+
+
+page("Google").TextField("q").SetText("my search"); 
+page("Google").Button("name:=btnG").Click(); 
+
+We have taken a step further and all properties are held in a single file.. Makes looking after the scripts easier..  If you want instructions then let me know mate 
+
+3) email 20.12.2012
+
+Properties File Overview: 
+
+1) Create a New Java Class within your project Called 'ObjectProperties' - Save this in a good location (Maybe a folder called Proj_Utils) 
+2) Within this Class make it look like this (constructor): 
+
+public abstract class ObjectProperties extends frameworkSuperHelper{ 
+
+
+These are your Constants: 
+/*Page Vars*/ 
+        public static final String PageTitle = "Welcome"; 
+        
+        
+        /*Survey Vars*/ 
+        public static final String TxtFld_Survey_surveyID = "surveyID"; 
+        public static final String TxtFld_Survey_surveyName = "surveyName"; 
+        public static final String Listbox_Survey_legalBasisId = "legalBasisId"; 
+        public static final String Listbox_Survey_surveyGroupId = "surveyGroupId"; 
+
+        
+        
+        /*Collection Exercise Vars*/ 
+        public static final String TxtFld_CollectionExercise_DisplayName = "displayName"; 
+        public static final String TxtFld_CollectionExercise_LabelId = "collectionlabel"; 
+        public static final String TxtFld_CollectionExercise_DateField = "eventDateId_input"; 
+        public static final String Listbox_CollectionExercise_surveyId = "surveyId"; 
+        public static final String Button_AddKeyDate = "value:=Add"; 
+        public static final String Listbox_CollectionExercise_eventTypeId = "eventTypeId"; 
+        /*Key Events Table*/ 
+        public static final String Table_CollectionExercise_KeyEvents = "eventKeyTable"; 
+
+
+All you need to do is change where your script points to, change it to point to ObjectProperties and the rest will take care of its self :) 
+
+Any probs let me know. 

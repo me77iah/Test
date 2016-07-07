@@ -1,0 +1,24 @@
+		// for Debug
+		String sDayToSelect = "20";
+		// For actual Calendar Control Selection Method
+		int iDayToSelect = Integer.parseInt(sDayToSelect);
+ 		// for Debug
+		
+		RootTestObject rto = getRootTestObject();
+		TestObject[] gto = rto.find(atDescendant("class","pickadate-enabled","ng-click","setDate()"), true);
+			
+		// sCalendarToSelect 
+		System.out.println(" There are "+gto.length+" Days Displayed on the Calender Control");   // 
+		GuiTestObject Cal_Button = (GuiTestObject)gto[iDayToSelect];  // typically returns 33 (active current month values + Inactive items of previous and future month)
+		
+		try {
+			Cal_Button.click();		
+			logTestResult(" Day "+sDayToSelect+" Selected on the Calendar ", true);
+		}
+		catch (Exception e){
+			logTestResult(" Calendar FAILED to Select", false);
+		}
+		finally {
+			// Clear the trash created by GuiTestObject Find Functionality above
+			unregisterAll();
+		}

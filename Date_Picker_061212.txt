@@ -1,0 +1,149 @@
+	//-------------------------------------  S T A R T  ----------------------------------------
+	//                      
+	//				Script Name   : <b>Popup_Date_Picker</b>
+	//
+	//-------------------------------------  S T A R T  ----------------------------------------
+	
+{
+		//----------------------------------------------------------------------------------
+		// HIT and ACTIVATE THE DEFINED CALLENDAR CONTROL ON ANY PAGE
+		//----------------------------------------------------------------------------------
+		
+		// Data From Calling Script DataPool/dataStore   // MODIFY PARAMETER VALUES TO FIT DATAPOOL
+		String sDayToSelect = (String)args[3333];  // Day in the future to select, up to 27, or in the past to -27
+		String sCalendarToSelect = (String)args[3333];   // Dynamic selection (below, using find)
+		String sCalendarName = (String)args[3333];   	 // Textual Description Of Calendar For Reporting Purposes
+		// Convert String Numeric Value TO Integer       (For Calendar Selection Method)
+		//----------------------------------------------------------------------------------
+		// CALENDAR IDs
+		// Method to select a specific calendar on ANY page
+		// GuiTestObject Cal_Button = (GuiTestObject)gto[sCalendarToSelect]; // sCalendarToSelect values
+		//----------------------------------------------------------------------------------
+		//                                                                                                   (    Incomplete    ) 
+		// L I S T    O F    E X I S T I N G   C A L E N D A R   C O N T R O L S    A C R O S S    P A G E S (Update as required)
+		
+		// New Learners Calendars - Profile - New Customer Page - Values that identify specific calendar controls on this page
+		// sCalendarToSelect = 0 (Licence and Driving Experience - Date of Entry)  
+		// sCalendarToSelect = 1 (Licence and Driving Experience - Theory Test Date)  
+		// sCalendarToSelect = 2 (Licence and Driving Experience - Practical Test Date)  
+		// sCalendarToSelect = 3 (Preferred Lesson Details - Start Date)  
+		
+		//----------------------------------------------------------------------------------
+		
+		// New DIT Pupil Calendar - Details Page - Values that identify specific calendar controls on this page
+		// sCalendarToSelect = 0 (UK Driving Licence - Expiry Date)  
+
+		//----------------------------------------------------------------------------------
+		
+		// New CDT Pupil Calendar - New CDT Pupil - Remos ID Page - Values that identify specific calendar controls on this page
+		// sCalendarToSelect = 0 (UK Driving Licence - Expiry Date)  
+
+		//----------------------------------------------------------------------------------
+
+		// New Instructor Calendars - Profile - New Instructor Page - Values that identify specific calendar controls on this page
+		// sCalendarToSelect = 0 (Phone Number - Ported Date)  
+		// sCalendarToSelect = 1 (Previous Address - Address From)  
+		
+		//----------------------------------------------------------------------------------
+
+		// L I S T    O F    E X I S T I N G   C A L E N D A R   C O N T R O L S    A C R O S S    P A G E S (END - Update as required)
+		
+//		// for Debug Use
+//		// Day to select parsed here via parameter or hard coded below
+//		String sDayToSelect = "-15"; // + Days into the future or past, anything over 27, the 1st of
+//		String sCalendarToSelect = "0";	 // the following month will be selected, anything before the 1st, 27th previous month selected
+//		String sCalendarName = "UK Licence - Expiry Date"; // "Preferred Lesson Details - Start Date";
+//		// for Debug Use
+		
+		// For actual Calendar Control Selection Method
+		int iCalendarToSelect = Integer.parseInt(sCalendarToSelect);
+//		// for Debug
+		
+		RootTestObject rto = getRootTestObject();
+		TestObject[] gto = rto.find(atDescendant(".alt","Choose Date",".class","Html.IMG"), false);
+			
+		// sCalendarToSelect 
+		System.out.println(gto.length);   // Returns 4 for New Learner
+		GuiTestObject Cal_Button = (GuiTestObject)gto[iCalendarToSelect];  // Replace gto[n]; with gto[iCalendarToSelect];
+		
+		try {
+			Cal_Button.click();		
+			logTestResult(sCalendarName+" Calendar Selected", true);
+		}
+		catch (Exception e){
+			logTestResult(sCalendarName+" Calendar FAILED to Select", false);
+		}
+		//----------------------------------------------------------------------------------
+		// NEED TO ENSURE WE CAN ONLY SELECT A FUTURE DAY (This may change)
+		//----------------------------------------------------------------------------------
+
+		SelectADate().waitForExistence(25, 0.25);
+			
+		// Pass in a day to change the popup to. If the current day of the month is larger than 27th,
+		// this value is overidden and default value set to the 1st of the following month
+		
+		//----------------------------------------------------------------------------------
+		
+		// Get The Date In A Format That We Can Use Directly
+		// Create an instance of SimpleDateFormat used for formatting  
+		DateFormat df = new SimpleDateFormat("dd");  // dd = 01 through 31 ("EEE dd MMM yyyy");
+		// Get the date today using Calendar object. 
+		java.util.Date today = Calendar.getInstance().getTime();         
+		// Using DateFormat format method we can create a string representation of a 
+		String sTodaysDate = df.format(today);       // date with the defined format. 
+
+		//----------------------------------------------------------------------------------
+		// If it is the 28th of the month (or greater), then navigate to the following month 
+		// and select 1st. If we are in December, the year automatically increments 
+		//----------------------------------------------------------------------------------
+				
+		// Cast the String to Integer for detecting 27th or greater
+		int iToday = Integer.parseInt(sTodaysDate);
+		// Cast target value future day to select
+		int iDayToSelect = Integer.parseInt(sDayToSelect);
+		// Add the 2 integers to get the future day to select
+		iDayToSelect = iDayToSelect+iToday;
+		
+		//----------------------------------------------------------------------------------
+		// If 27 or more, than go to next month and select the 1st Instead
+		if (iDayToSelect > 27){
+			// Click Next Month
+			Navigate_Next_Month(ANY, READY).click();
+			sleep(1);
+			iDayToSelect = 1;
+			logInfo("Day Requested is Greated than the 27th, Therefore Navigating to The Following Month and " +
+					"Selecting the ->"+iDayToSelect+"st->" );}
+		if (iDayToSelect < 1){ // Todays date - (minus)- supplied value is before the 1st of the month
+			// Click Previous Month
+			Navigate_Previous_Month(ANY, READY).click();
+			sleep(1);
+			iDayToSelect = 27;
+			logInfo("Day Requested is Before the 1st of the Month, Therefore Navigating to The Previous Month and " +
+					"Selecting the ->"+iDayToSelect+"th->" );}
+			//----------------------------------------------------------------------------------			
+		// Click the requested day, if the day is greater than 27, then click 1st of following month		
+		try {
+			// We Search The Calendar For The Specified Day, with text COLOR = black (active days displayed), 
+			// grey text = previous or next month as displayed at each extremity of the displayed month
+			((GuiTestObject)SelectADate().find(atDescendant(".text", iDayToSelect, "style",  "COLOR: black"))[0]).click();
+			logInfo(" Popup Calendar, Day Selection Number ->"+iDayToSelect+"-> Selected OK");            // style:  COLOR: black
+			//----------------------------------------------------------------------------------
+//			sleep(0.5);    The Click On The Number Dispels The Popup, So Too LAte To Scrape The Data Off
+//			//----------------------------------------------------------------------------------
+//			String sPopup_Calendar_Header = (String)Month_Year_Header().getProperty(".contentText");
+//			logTestResult(" Popup Date Picker Menu Set To ->"+iFutureDayToSelect+"->  ->"+sPopup_Calendar_Header+"-> ", true);
+//			//----------------------------------------------------------------------------------
+		}// Didn't find it that time
+		catch (Exception e){
+			// Didn't Find the day (can't happen, can it?
+			logInfo(" Popup Calendar, Day Selection for ->"+iDayToSelect+"-> Day DID NOT Select");}
+				 
+		// Clear the trash created by GuiTestObject Find Functionality above
+		unregisterAll();
+
+	}
+	//--------------------------------------  E  N  D  -----------------------------------------
+	//                      
+	//				Script Name   : <b>Popup_Date_Picker</b>
+	//
+	//--------------------------------------  E  N  D  -----------------------------------------
